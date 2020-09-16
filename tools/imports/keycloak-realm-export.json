@@ -102,6 +102,7 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "demo",
       "redirectUris": [
+        "https://localhost:5001/",
         "https://localhost:44318/signin-oidc",
         "https://localhost:5001/signin-oidc"
       ],
