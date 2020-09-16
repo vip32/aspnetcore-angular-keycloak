@@ -22,13 +22,13 @@ export function initializer(keycloak: KeycloakService): () => Promise<any> {
           bearerExcludedUrls: []
         });
 
-        from(keycloak.keycloakEvents$) // https://github.com/mauriciovigolo/keycloak-angular/issues/249
+        from(keycloak.keycloakEvents$)
           .pipe(filter(event => event.type === KeycloakEventType.OnAuthSuccess))
           .subscribe(() => {
             console.log('auth: success');
           });
 
-        from(keycloak.keycloakEvents$) // https://github.com/mauriciovigolo/keycloak-angular/issues/249
+        from(keycloak.keycloakEvents$)
           .pipe(filter(event => event.type === KeycloakEventType.OnAuthRefreshSuccess))
           .subscribe(() => {
             console.log('auth: refresh success');
