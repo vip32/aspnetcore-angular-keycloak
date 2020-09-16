@@ -343,13 +343,13 @@
   <p></p>
 
   <div class="card-container">
-    <div class="userDetails" *ngIf="userDetails">
-      <h2>{{userDetails.firstName}}</h2>
+    <div *ngIf="userDetails">
+      <h3>Hello {{userDetails.username}}</h3>
       <p>
         {{userDetails.email}}
       </p>
-    </div>
-    <a (click)="doLogout()" clrDropdownItem>Log out</a>
+      <a (click)="doLogout()" clrDropdownItem>Log out</a>
+    </div><br />
   </div>
 
   <!-- Resources -->
