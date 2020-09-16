@@ -1,0 +1,81 @@
+version: '3.5'
+
+services:
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server
+    container_name: demo_mssql
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Abcd1234! # Server=mssql;Database=sample;User=sa;Password=Abcd1234!;Trusted_Connection=False;MultipleActiveResultSets=True;
+      - MSSQL_PID=Developer
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S mssql -U SA -P 'Abcd1234!' -Q 'select 1'
+    ports:
+      - 1433:1433
+    volumes:
+      - mssql:/var/opt/mssql
+    networks:
+      - demo
+
+  mssqlscripts:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: demo_mssqlscripts
+    depends_on:
+      - mssql
+    command: /bin/bash -c 'until /opt/mssql-tools/bin/sqlcmd -S mssql -U sa -P "Abcd1234!" -Q "create database demo_keycloak"; do sleep 5; done'
+    networks:
+      - demo
+
+  keycloak:
+    image: jboss/keycloak
+    container_name: demo_keycloak
+    restart: unless-stopped
+    depends_on:
+      - mssql
+      - mssqlscripts
+    ports:
+      - 8080:8080 # http://localhost:8080 (admin/admin)
+    volumes:
+      - ./tools/imports:/opt/jboss/keycloak/imports
+    command:
+      - "-b 0.0.0.0 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/jboss/keycloak/imports/keycloak-realm-export.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING -Dkeycloak.profile.feature.upload_scripts=enabled"
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=mssql # https://github.com/keycloak/keycloak-containers/tree/master/docker-compose-examples
+      - DB_USER=sa
+      - DB_PASSWORD=Abcd1234!
+      - DB_ADDR=mssql
+      - DB_DATABASE=demo_keycloak
+    networks:
+      - demo
+
+  seq:
+    image: datalust/seq:latest
+    container_name: demo_seq
+    restart: unless-stopped
+    ports:
+      - 5340:80 # http://localhost:5340
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - seq:/data
+    networks:
+    - demo
+
+volumes:
+  mssql:
+    name: demo_mssql
+    driver: local
+  seq:
+    name: demo_seq
+    driver: local
+#  portainer:
+#    driver: local
+
+networks:
+  demo:
+    name: demo
+    driver: bridge
