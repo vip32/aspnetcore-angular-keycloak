@@ -14,11 +14,6 @@ export function initializer(keycloak: KeycloakService): () => Promise<any> {
             onLoad: 'login-required',
             checkLoginIframe: false
           },
-          //initOptions: {
-          //  onLoad: 'check-sso',
-          //  silentCheckSsoRedirectUri:
-          //    window.location.origin + '/assets/silent-check-sso.html', // https://localhost:5001/assets/silent-check-sso.html
-          //},
           bearerExcludedUrls: []
         });
 
