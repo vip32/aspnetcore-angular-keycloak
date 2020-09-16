@@ -344,7 +344,7 @@
 
   <div class="card-container">
     <div *ngIf="userDetails">
-      <h3>Hello {{userDetails.username}}</h3>
+      <h3>Hello {{userDetails.firstName}} {{userDetails.lastName}} [{{userDetails.username}}]</h3>
       <p>
         {{userDetails.email}}
       </p>
