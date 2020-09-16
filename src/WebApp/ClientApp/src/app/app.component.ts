@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { KeycloakProfile } from 'keycloak-js';
-import { KeycloakService } from 'keycloak-angular';
+import { KeycloakService, KeycloakEventType } from 'keycloak-angular';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +17,10 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     if (await this.keycloakService.isLoggedIn()) {
       this.userDetails = await this.keycloakService.loadUserProfile();
-      console.log("account: ", this.userDetails);
+      console.log("auth: account=", this.userDetails);
+      console.log("auth: roles=", this.keycloakService.getUserRoles(true));
+      console.log("auth: token=", this.keycloakService.getKeycloakInstance().token);
+      console.log("auth: keycloak=", this.keycloakService.getKeycloakInstance());
     }
   }
 
