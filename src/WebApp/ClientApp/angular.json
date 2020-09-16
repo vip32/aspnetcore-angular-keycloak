@@ -26,7 +26,11 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "keycloak-angular",
+              "keycloak-js"
+            ]
           },
           "configurations": {
             "production": {
