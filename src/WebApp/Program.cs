@@ -57,7 +57,7 @@ namespace WebApp
                 .Enrich.FromLogContext()
                 .WriteTo.Trace()
                 .WriteTo.Console()
-                .WriteTo.Seq(string.IsNullOrWhiteSpace(configuration["Serilog:SeqServerUrl"]) ? "http://seq" : configuration["Serilog:SeqServerUrl"])
+                .WriteTo.Seq(string.IsNullOrWhiteSpace(configuration["Serilog:SeqServerUrl"]) ? "http://localhost:5340" /*"http://seq"*/ : configuration["Serilog:SeqServerUrl"])
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }

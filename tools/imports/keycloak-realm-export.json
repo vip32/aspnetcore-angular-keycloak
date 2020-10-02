@@ -677,8 +677,8 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "demo",
       "redirectUris": [
-        "https://localhost:44318/",
-        "https://localhost:5001/"
+        "https://localhost:44318/*",
+        "https://localhost:5001/*"
       ],
       "webOrigins": [
         "*"

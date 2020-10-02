@@ -1,10 +1,16 @@
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Net.Http;
 
 namespace WebApp
 {
@@ -21,6 +27,32 @@ namespace WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = this.Configuration["Oidc:Authority"];
+                options.Audience = this.Configuration["Oidc:ClientId"];
+                options.IncludeErrorDetails = true;
+                options.RequireHttpsMetadata = false; // only DEV should use non https
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name",
+                    RoleClaimType = "groups",
+                    ValidateAudience = false,
+                    //ValidAudiences = new[] { "master-realm", "account" },
+                    ValidateIssuer = true,
+                    ValidIssuer = this.Configuration["Oidc:Authority"],
+                    ValidateLifetime = false
+                };
+            });
+            services.AddAuthorization();
+            services.AddProblemDetails(this.ConfigureProblemDetails);
+            services.AddSwaggerDocument(document => document.Title = this.GetType().Namespace);
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -51,6 +83,9 @@ namespace WebApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -71,6 +106,14 @@ namespace WebApp
                     //spa.UseProxyToSpaDevelopmentServer("http://localhost:4200") // use 'ng serve' seperatly
                 }
             });
+        }
+
+        private void ConfigureProblemDetails(ProblemDetailsOptions options)
+        {
+            options.IncludeExceptionDetails = (ctx, ex) => true;
+            options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
+            options.MapToStatusCode<HttpRequestException>(StatusCodes.Status503ServiceUnavailable);
+            options.MapToStatusCode<Exception>(StatusCodes.Status500InternalServerError);
         }
     }
 }
