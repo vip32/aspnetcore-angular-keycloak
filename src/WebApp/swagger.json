@@ -2,7 +2,7 @@
   "x-generator": "NSwag v13.8.1.0 (NJsonSchema v10.2.0.0 (Newtonsoft.Json v12.0.0.0))",
   "swagger": "2.0",
   "info": {
-    "title": "Vgb.Kissy.Presentation.Web",
+    "title": "Presentation.Web",
     "version": "1.0.0"
   },
   "host": "localhost:5001",
