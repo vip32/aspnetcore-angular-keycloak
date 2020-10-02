@@ -1,0 +1,9 @@
+<h1 id="tableLabel">User profile</h1>
+
+<p>This component demonstrates fetching authentication information from the server.</p>
+
+<p *ngIf="!content"><em>Loading...</em></p>
+
+<ul *ngFor="let item of content | keyvalue">
+  <li><strong>{{item.key}}</strong>={{item.value}}</li>
+</ul>

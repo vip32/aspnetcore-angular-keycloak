@@ -9,12 +9,14 @@ import { initializer } from './utils/app-init';
 import { AppComponent } from './app.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { FetchProfileComponent } from './fetch-profile/fetch-profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CounterComponent,
-    FetchDataComponent
+    FetchDataComponent,
+    FetchProfileComponent
   ],
   imports: [
     CommonModule,
