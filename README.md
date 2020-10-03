@@ -3,6 +3,14 @@
 - start host (api+ng) > `Visual Studio CTRL+F5`
 - browse url > http://localhost:5001 (admin/admin)
 
+### showcase
+- asp.net 5
+- angular 10
+- keycloak + mssql
+- swagger
+- generated ts api client
+- integration tests (+FakeAuthenticationHandler)
+
 ### management
 - keycloak > http://localhost:8080/auth/admin (admin/admin) 
 - clients > `demo`
