@@ -6,7 +6,7 @@
 ### showcase
 - asp.net 5
 - angular 10
-- keycloak + mssql
+- keycloak + mssql (containers)
 - swagger
 - generated ts api client
 - integration tests (+FakeAuthenticationHandler)
