@@ -25,8 +25,8 @@
 - login/logout
 - token update (refresh)
 - docker setup (keycloak+mssql)
+- use weatherforecast api from ng
+- generate ts typed service client (nswag) https://blog.sanderaernouts.com/autogenerate-typescript-api-client-with-nswag
 
 ### todo
 - vs code launch+debug (ctrl+shift+d)
-- use weatherforecast api from ng
-- generate ts typed service client (nswag) https://blog.sanderaernouts.com/autogenerate-typescript-api-client-with-nswag
