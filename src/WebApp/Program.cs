@@ -5,7 +5,6 @@ namespace WebApp
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Serilog;
-    using System;
     using System.IO;
 
     public static class Program
@@ -52,12 +51,12 @@ namespace WebApp
                .UseSerilog((context, builder) =>
                {
                    builder.ReadFrom.Configuration(context.Configuration)
-                        .MinimumLevel.Verbose()
-                        .Enrich.WithProperty("ServiceName", AppName)
-                        .Enrich.FromLogContext()
-                        .WriteTo.Trace()
-                        .WriteTo.Console()
-                        .WriteTo.Seq(string.IsNullOrWhiteSpace(context.Configuration["Serilog:SeqServerUrl"]) ? "http://localhost:5340" /*"http://seq"*/ : context.Configuration["Serilog:SeqServerUrl"]);
+                     .MinimumLevel.Verbose()
+                     .Enrich.WithProperty("ServiceName", AppName)
+                     .Enrich.FromLogContext()
+                     .WriteTo.Trace()
+                     .WriteTo.Console()
+                     .WriteTo.Seq(string.IsNullOrWhiteSpace(context.Configuration["Serilog:SeqServerUrl"]) ? "http://localhost:5340" /*"http://seq"*/ : context.Configuration["Serilog:SeqServerUrl"]);
                })
                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
