@@ -2,7 +2,6 @@ namespace WebApp
 {
     using System;
     using System.IO;
-    using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
@@ -11,20 +10,18 @@ namespace WebApp
     public static class Program
     {
         public static readonly string AppName = typeof(Program).Namespace.Replace("Energybase.ServicePortal.", string.Empty, StringComparison.OrdinalIgnoreCase).Replace(".Presentation.Web", string.Empty, StringComparison.OrdinalIgnoreCase);
+        public static IConfiguration Configuration;
 
         public static int Main(string[] args)
         {
             //Serilog.Debugging.SelfLog.Enable(msg => System.Diagnostics.Debug.WriteLine(msg));
-            var configuration = GetConfiguration();
-            Log.Logger = CreateLogger(configuration);
+            Configuration = GetConfiguration();
+            Log.Logger = CreateLogger(Configuration);
 
             try
             {
-                Log.Information("configuring web host (service={ServiceName})...", AppName);
-                var host = BuildWebHost(configuration, args);
-
                 Log.Information("starting web host (service={ServiceName})...", AppName);
-                host.Run();
+                CreateHostBuilder(args).Build().Run();
 
                 return 0;
             }
@@ -39,15 +36,14 @@ namespace WebApp
             }
         }
 
-        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .CaptureStartupErrors(false)
-                .UseStartup<Startup>()
-                //.UseApplicationInsights()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseConfiguration(configuration)
-                .UseSerilog()
-                .Build();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+           Host.CreateDefaultBuilder(args)
+               .UseSerilog()
+               .ConfigureWebHostDefaults(webBuilder =>
+               {
+                   webBuilder.UseConfiguration(Configuration);
+                   webBuilder.UseStartup<Startup>();
+               });
 
         private static ILogger CreateLogger(IConfiguration configuration)
         {
