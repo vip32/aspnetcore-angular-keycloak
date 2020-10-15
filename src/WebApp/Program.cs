@@ -10,7 +10,7 @@ namespace WebApp
 
     public static class Program
     {
-        private static readonly string AppName = typeof(Program).Namespace.Replace("Prefix.", string.Empty, StringComparison.OrdinalIgnoreCase).Replace(".Presentation.Web", string.Empty, StringComparison.OrdinalIgnoreCase);
+        private static readonly string AppName = typeof(Program).Namespace;
 
         public static void Main(string[] args)
         {
