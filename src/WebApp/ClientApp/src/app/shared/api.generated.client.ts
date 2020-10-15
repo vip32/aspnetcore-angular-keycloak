@@ -26,7 +26,7 @@ export class UserProfileClient {
     }
 
     get(): Observable<{ [key: string]: string; }> {
-        let url_ = this.baseUrl + "/UserProfile";
+        let url_ = this.baseUrl + "/api/v1/userprofile";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -71,6 +71,14 @@ export class UserProfileClient {
             }
             return _observableOf(result200);
             }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -92,7 +100,7 @@ export class WeatherForecastClient {
     }
 
     get(): Observable<WeatherForecast[]> {
-        let url_ = this.baseUrl + "/WeatherForecast";
+        let url_ = this.baseUrl + "/api/v1/weatherforecasts";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -135,6 +143,14 @@ export class WeatherForecastClient {
             }
             return _observableOf(result200);
             }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -145,9 +161,9 @@ export class WeatherForecastClient {
 }
 
 export class WeatherForecast implements IWeatherForecast {
-    date!: Date;
-    temperatureC!: number;
-    temperatureF!: number;
+    date?: Date;
+    temperatureC?: number;
+    temperatureF?: number;
     summary?: string | undefined;
 
     constructor(data?: IWeatherForecast) {
@@ -186,9 +202,9 @@ export class WeatherForecast implements IWeatherForecast {
 }
 
 export interface IWeatherForecast {
-    date: Date;
-    temperatureC: number;
-    temperatureF: number;
+    date?: Date;
+    temperatureC?: number;
+    temperatureF?: number;
     summary?: string | undefined;
 }
 

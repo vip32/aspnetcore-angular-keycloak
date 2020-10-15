@@ -46,7 +46,7 @@
         [Fact]
         public async Task WeatherForecastGetTest()
         {
-            var response = await this.client.GetAsync("/weatherforecast").ConfigureAwait(false);
+            var response = await this.client.GetAsync("api/v1/weatherforecasts").ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -59,7 +59,7 @@
         [Fact]
         public async Task UserProfileGetTest()
         {
-            var response = await this.client.GetAsync("/userprofile").ConfigureAwait(false);
+            var response = await this.client.GetAsync("api/v1/userprofile").ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
