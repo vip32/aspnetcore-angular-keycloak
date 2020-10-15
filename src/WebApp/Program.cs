@@ -1,85 +1,64 @@
 namespace WebApp
 {
-    using System;
-    using System.IO;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
     using Serilog;
+    using System;
+    using System.IO;
 
     public static class Program
     {
-        public static readonly string AppName = typeof(Program).Namespace.Replace("Energybase.ServicePortal.", string.Empty, StringComparison.OrdinalIgnoreCase).Replace(".Presentation.Web", string.Empty, StringComparison.OrdinalIgnoreCase);
-        public static IConfiguration Configuration;
+        private static readonly string AppName = typeof(Program).Namespace.Replace("Energybase.ServicePortal.", string.Empty, StringComparison.OrdinalIgnoreCase).Replace(".Presentation.Web", string.Empty, StringComparison.OrdinalIgnoreCase);
 
-        public static int Main(string[] args)
+        public static void Main(string[] args)
         {
-            //Serilog.Debugging.SelfLog.Enable(msg => System.Diagnostics.Debug.WriteLine(msg));
-            Configuration = GetConfiguration();
-            Log.Logger = CreateLogger(Configuration);
-
-            try
-            {
-                Log.Information("starting web host (service={ServiceName})...", AppName);
-                CreateHostBuilder(args).Build().Run();
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "program terminated unexpectedly (service={ServiceName})!", AppName);
-                return 1;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
            Host.CreateDefaultBuilder(args)
-               .UseSerilog()
-               .ConfigureWebHostDefaults(webBuilder =>
+               .ConfigureAppConfiguration((context, builder) =>
                {
-                   webBuilder.UseConfiguration(Configuration);
-                   webBuilder.UseStartup<Startup>();
-               });
+                   builder
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{context?.HostingEnvironment?.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables();
 
-        private static ILogger CreateLogger(IConfiguration configuration)
-        {
-            return new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.WithProperty("ServiceName", AppName)
-                .Enrich.FromLogContext()
-                .WriteTo.Trace()
-                .WriteTo.Console()
-                .WriteTo.Seq(string.IsNullOrWhiteSpace(configuration["Serilog:SeqServerUrl"]) ? "http://localhost:5340" /*"http://seq"*/ : configuration["Serilog:SeqServerUrl"])
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
+                   var config = builder.Build();
+                   if (config.GetValue("AzureAppConfiguration:Enabled", false))
+                   {
+                       builder.AddAzureAppConfiguration(config["AzureAppConfiguration:ConnectionString"]);
+                   }
 
-        private static IConfiguration GetConfiguration()
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
-            //var config = builder.Build();
-            //if (config.GetValue("AzureAppConfiguration:Enabled", false))
-            //{
-            //    builder.AddAzureAppConfiguration(config["AzureAppConfiguration:ConnectionString"]);
-            //}
-
-            //if (config.GetValue("AzureKeyVault:Enabled", false))
-            //{
-            //    builder.AddAzureKeyVault(
-            //        $"https://{config["AzureKeyVault:Name"]}.vault.azure.net/",
-            //        config["AzureKeyVault:ClientId"],
-            //        config["AzureKeyVault:ClientSecret"]);
-            //}
-
-            return builder.Build();
-        }
+                   if (config.GetValue("AzureKeyVault:Enabled", false))
+                   {
+                       builder.AddAzureKeyVault(
+                           $"https://{config["AzureKeyVault:Name"]}.vault.azure.net/",
+                           config["AzureKeyVault:ClientId"],
+                           config["AzureKeyVault:ClientSecret"]);
+                   }
+               })
+               .ConfigureLogging((context, builder) =>
+               {
+                   if (context.Configuration.GetValue("AzureApplicationInsights:Enabled", false))
+                   {
+                       builder.AddApplicationInsights(
+                           context.Configuration["AzureApplicationInsights:InstrumentationKey"]);
+                   }
+               })
+               .UseSerilog((context, builder) =>
+               {
+                   builder.ReadFrom.Configuration(context.Configuration)
+                        .MinimumLevel.Verbose()
+                        .Enrich.WithProperty("ServiceName", AppName)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Trace()
+                        .WriteTo.Console()
+                        .WriteTo.Seq(string.IsNullOrWhiteSpace(context.Configuration["Serilog:SeqServerUrl"]) ? "http://localhost:5340" /*"http://seq"*/ : context.Configuration["Serilog:SeqServerUrl"]);
+               })
+               .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }
