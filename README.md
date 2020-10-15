@@ -6,7 +6,7 @@
 ### showcase
 - asp.net 5
 - angular 10
-- keycloak + mssql
+- keycloak + mssql (containers)
 - swagger
 - generated ts api client
 - integration tests (+FakeAuthenticationHandler)
@@ -25,8 +25,8 @@
 - login/logout
 - token update (refresh)
 - docker setup (keycloak+mssql)
+- use weatherforecast api from ng
+- generate ts typed service client (nswag) https://blog.sanderaernouts.com/autogenerate-typescript-api-client-with-nswag
 
 ### todo
 - vs code launch+debug (ctrl+shift+d)
-- use weatherforecast api from ng
-- generate ts typed service client (nswag) https://blog.sanderaernouts.com/autogenerate-typescript-api-client-with-nswag
