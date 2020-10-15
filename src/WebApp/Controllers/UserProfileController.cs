@@ -6,7 +6,8 @@
 
     [Authorize] // (Roles = "role1")
     [ApiController]
-    [Route("[controller]")]
+    [ApiVersion("1.0")]
+    [Route("/api/v{version:apiVersion}/userprofile")]
     public class UserProfileController : ControllerBase
     {
         [HttpGet]

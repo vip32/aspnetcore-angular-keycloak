@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WebApp.Controllers
+﻿namespace WebApp.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     [Authorize] // (Roles = "role1")
     [ApiController]
-    [Route("[controller]")]
+    [ApiVersion("1.0")]
+    [Route("/api/v{version:apiVersion}/weatherforecasts")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
