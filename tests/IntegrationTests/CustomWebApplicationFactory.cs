@@ -1,6 +1,7 @@
 ﻿namespace IntegrationTests
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Security.Claims;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
@@ -8,6 +9,7 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.AspNetCore.TestHost;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
@@ -23,6 +25,12 @@
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<TStartup>();
+                    webBuilder.ConfigureAppConfiguration((context, builder) =>
+                     {
+                         builder
+                          .SetBasePath(Directory.GetCurrentDirectory())
+                          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                     });
                     webBuilder.ConfigureTestServices(services => services
                         .AddAuthentication(options => // add a fake authentication handler
                         {
