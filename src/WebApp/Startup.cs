@@ -44,6 +44,7 @@ namespace WebApp
                 .AddJwtBearer(options => this.ConfigureJwtBearer(options));
             services.AddAuthorization();
 
+            services.AddTransient<IClaimsTransformation, RoleClaimsTransformer>();
             services.AddApiVersioning(options => this.ConfigureApiVersioning(options));
             services.AddVersionedApiExplorer(options => options.SubstituteApiVersionInUrl = true);
 

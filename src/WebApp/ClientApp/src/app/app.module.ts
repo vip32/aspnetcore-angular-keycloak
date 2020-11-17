@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { FetchProfileComponent } from './fetch-profile/fetch-profile.component';
+import { UserProfileClient} from './shared/api.generated.client';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { FetchProfileComponent } from './fetch-profile/fetch-profile.component';
       useFactory: initializer,
       multi: true,
       deps: [KeycloakService],
-    }
+    },
+    UserProfileClient,
   ],
   bootstrap: [AppComponent]
 })

@@ -1,18 +1,28 @@
 import { Component, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { KeycloakService } from 'keycloak-angular';
+import { UserProfileClient } from 'src/app/shared/api.generated.client';
 
 @Component({
   selector: 'app-fetch-profile',
-  templateUrl: './fetch-profile.component.html'
+  templateUrl: './fetch-profile.component.html',
 })
 export class FetchProfileComponent {
   public content: object;
+  public accessToken: string;
+  public roles: string[];
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    console.log('profile: get=', baseUrl + 'api/v1/userprofile');
-    http.get<object>(baseUrl + 'api/v1/userprofile').subscribe(result => { // TODO: use generated API client
-      console.log('profile: data=', result);
-      this.content = result;
-    }, error => console.error(error));
+  constructor(
+    private userProfileClient: UserProfileClient,
+    private keycloakService: KeycloakService) {
+    console.log('get userprofile');
+    this.userProfileClient.get().subscribe(
+      (result) => {
+        console.log('profile: data=', result);
+        this.content = result;
+        this.accessToken = this.keycloakService.getKeycloakInstance().token;
+        this.roles = this.keycloakService.getUserRoles(true);
+      },
+      (error) => console.error(error)
+    );
   }
 }

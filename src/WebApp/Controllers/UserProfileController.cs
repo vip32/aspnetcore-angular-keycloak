@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Authorize] // (Roles = "role1")
+    [Authorize] // (Roles = "admin")
     [ApiController]
     [ApiVersion("1.0")]
     [Route("/api/v{version:apiVersion}/userprofile")]

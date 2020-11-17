@@ -4,6 +4,23 @@
 
 <p *ngIf="!content"><em>Loading...</em></p>
 
+<h3>Tokens</h3>
+<ul>
+  <li>
+    <textarea rows="7" cols="80">{{ accessToken }}</textarea>
+  </li>
+</ul>
+
+<h3>Roles</h3>
+<ul *ngFor="let role of roles">
+  <li>
+    {{ role }}
+  </li>
+</ul>
+
+<h3>Claims</h3>
 <ul *ngFor="let item of content | keyvalue">
-  <li><strong>{{item.key}}</strong>={{item.value}}</li>
+  <li>
+    <strong>{{ item.key }}</strong>={{ item.value }}
+  </li>
 </ul>
